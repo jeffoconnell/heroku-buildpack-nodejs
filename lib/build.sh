@@ -119,7 +119,10 @@ install_node() {
   curl $node_url -s -o - | tar xzf - -C /tmp
 
   # Move node (and npm) into .heroku/node and make them executable
-  mv /tmp/node-v$node_engine-linux-x64/* $heroku_dir/node
+  #mv /tmp/node-v$node_engine-linux-x64/* $heroku_dir/node
+  cp -r /tmp/node-v$node_engine-linux-x64/* $heroku_dir/node
+  rm -rf /tmp/node-v$node_engine-linux-x64
+
   chmod +x $heroku_dir/node/bin/*
   PATH=$heroku_dir/node/bin:$PATH
 }
@@ -139,7 +142,10 @@ install_iojs() {
   curl $download_url -s -o - | tar xzf - -C /tmp
 
   # Move iojs/node (and npm) binaries into .heroku/node and make them executable
-  mv /tmp/iojs-v$iojs_engine-linux-x64/* $heroku_dir/node
+  # mv /tmp/iojs-v$iojs_engine-linux-x64/* $heroku_dir/node
+  cp -r /tmp/iojs-v$iojs_engine-linux-x64/* $heroku_dir/node
+  rm -rf /tmp/iojs-v$iojs_engine-linux-x64
+
   chmod +x $heroku_dir/node/bin/*
   PATH=$heroku_dir/node/bin:$PATH
 }
@@ -155,7 +161,7 @@ install_npm() {
       info "npm `npm --version` already installed with node"
     else
       info "Downloading and installing npm $npm_engine (replacing version `npm --version`)..."
-      npm install --quiet -g npm@$npm_engine 2>&1 >/dev/null | indent
+      sudo npm install --quiet -g npm@$npm_engine 2>&1 >/dev/null | indent
     fi
     warn_old_npm `npm --version`
   else
@@ -171,7 +177,7 @@ function build_dependencies() {
     info "Rebuilding any native modules for this architecture"
     npm rebuild 2>&1 | indent
     info "Installing any new modules"
-    npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+    sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
 
   else
     cache_status=$(get_cache_status)
@@ -182,12 +188,12 @@ function build_dependencies() {
       info "Pruning unused dependencies"
       npm prune 2>&1 | indent
       info "Installing any new modules"
-      npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+      sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
     else
       info "$cache_status"
       info "Installing node modules"
       touch $build_dir/.npmrc
-      npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+      sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
     fi
   fi
 }
