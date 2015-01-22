@@ -161,7 +161,7 @@ install_npm() {
       info "npm `npm --version` already installed with node"
     else
       info "Downloading and installing npm $npm_engine (replacing version `npm --version`)..."
-      sudo npm install --quiet -g npm@$npm_engine 2>&1 >/dev/null | indent
+      npm install --quiet -g npm@$npm_engine 2>&1 >/dev/null | indent
     fi
     warn_old_npm `npm --version`
   else
@@ -177,7 +177,7 @@ function build_dependencies() {
     info "Rebuilding any native modules for this architecture"
     npm rebuild 2>&1 | indent
     info "Installing any new modules"
-    sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+    npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
 
   else
     cache_status=$(get_cache_status)
@@ -188,12 +188,12 @@ function build_dependencies() {
       info "Pruning unused dependencies"
       npm prune 2>&1 | indent
       info "Installing any new modules"
-      sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+      npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
     else
       info "$cache_status"
       info "Installing node modules"
       touch $build_dir/.npmrc
-      sudo npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
+      npm install --quiet --userconfig $build_dir/.npmrc 2>&1 | indent
     fi
   fi
 }
